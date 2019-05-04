@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using NucuPaste.Data;
 using NucuPaste.Models;
 
@@ -15,10 +16,14 @@ namespace NucuPaste.Controllers
     public class PastesController : ControllerBase
     {
         private readonly PasteDbContext _context;
+        private readonly ILogger _logger;
 
-        public PastesController(PasteDbContext context)
+        public PastesController(PasteDbContext context, ILogger<PastesController> logger)
         {
+            _logger = logger;
             _context = context;
+            
+            _logger.LogInformation("{} says hello!", nameof(PastesController));
         }
 
         // GET: api/Pastes
@@ -94,7 +99,8 @@ namespace NucuPaste.Controllers
             _context.Pastes.Add(paste);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetPaste", new { id = paste.Id }, paste);
+            return CreatedAtAction("GetPaste", 
+            new { id = paste.Id }, paste);
         }
 
         // DELETE: api/Pastes/5
