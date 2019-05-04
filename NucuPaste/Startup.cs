@@ -36,7 +36,7 @@ namespace NucuPaste
             // Add Swagger Generator
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new Info { Title = "NucuPaste API", Version = "v1" });
+                c.SwaggerDoc("v1", new Info { Title = "NucuPaste API V1", Version = "v1" });
             });
         }
 

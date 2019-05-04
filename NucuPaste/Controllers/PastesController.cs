@@ -11,8 +11,10 @@ using NucuPaste.Models;
 
 namespace NucuPaste.Controllers
 {
-    [Route("api/[controller]")]
     [ApiController]
+    [ApiExplorerSettings(GroupName = "v1")]
+    [ApiVersion( "1.0" )]
+    [Route( "api/v{version:apiVersion}/[controller]" )]
     public class PastesController : ControllerBase
     {
         private readonly PasteDbContext _context;
