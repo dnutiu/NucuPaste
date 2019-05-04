@@ -29,6 +29,7 @@ namespace NucuPaste.Controllers
         }
 
         // GET: api/Pastes
+        [ProducesResponseType(typeof(IDictionary<string, Paste>), 200)]
         [HttpGet]
         public IEnumerable<Paste> GetPastes()
         {
@@ -36,6 +37,8 @@ namespace NucuPaste.Controllers
         }
 
         // GET: api/Pastes/5
+        [ProducesResponseType(typeof(IDictionary<string, string>), 404)]
+        [ProducesResponseType(typeof(Paste), 200)]
         [HttpGet("{id}")]
         public async Task<IActionResult> GetPaste([FromRoute] long id)
         {
@@ -55,6 +58,9 @@ namespace NucuPaste.Controllers
         }
 
         // PUT: api/Pastes/5
+        [ProducesResponseType(typeof(IDictionary<string, string>), 400)]
+        [ProducesResponseType(typeof(IDictionary<string, string>), 404)]
+        [ProducesResponseType(typeof(Paste), 200)]
         [HttpPut("{id}")]
         public async Task<IActionResult> PutPaste([FromRoute] long id, [FromBody] Paste paste)
         {
@@ -90,6 +96,8 @@ namespace NucuPaste.Controllers
         }
 
         // POST: api/Pastes
+        [ProducesResponseType(typeof(IDictionary<string, string>), 400)]
+        [ProducesResponseType(typeof(Paste), 201)]
         [HttpPost]
         public async Task<IActionResult> PostPaste([FromBody] Paste paste)
         {
@@ -106,6 +114,7 @@ namespace NucuPaste.Controllers
         }
 
         // DELETE: api/Pastes/5
+        [ProducesResponseType(typeof(Paste), 200)]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeletePaste([FromRoute] long id)
         {
