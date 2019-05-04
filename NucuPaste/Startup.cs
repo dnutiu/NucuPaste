@@ -12,6 +12,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using NucuPaste.Data;
+using Swashbuckle.AspNetCore.Swagger;
 
 namespace NucuPaste
 {
@@ -29,6 +30,14 @@ namespace NucuPaste
         {
             services.AddDbContext<PasteDbContext>(options => options.UseInMemoryDatabase("Paste"));
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+
+            services.AddApiVersioning();
+            
+            // Add Swagger Generator
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new Info { Title = "NucuPaste API", Version = "v1" });
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -43,6 +52,15 @@ namespace NucuPaste
                 app.UseHsts();
                 app.UseHttpsRedirection();
             }
+
+            // Configure Swagger and SwaggerUI
+            app.UseSwagger();
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "NucuPaste API");
+                // Serve the SwaggerUI at the root.
+                c.RoutePrefix = string.Empty;
+            });
 
             app.UseMvc();
         }
