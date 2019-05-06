@@ -4,6 +4,7 @@ namespace NucuPaste.Models
 {
     public class Paste
     {
+        [Key]
         public long Id { get; set; }
 
         [Required]
