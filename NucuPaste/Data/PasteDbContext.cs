@@ -5,6 +5,11 @@ namespace NucuPaste.Data
 {
     public class PasteDbContext : DbContext
     {
+        public PasteDbContext() : base() 
+        {
+
+        }
+
         public PasteDbContext(DbContextOptions<PasteDbContext> options) : base(options)
         {
 
