@@ -14,7 +14,7 @@ namespace NucuPaste.Controllers
     [ApiController]
     [ApiExplorerSettings(GroupName = "v1")]
     [ApiVersion( "1" )]
-    [Route( "api/v{version}/[controller]" )]
+    [Route( "api/v{version:apiVersion}/[controller]")]
     public class PastesController : ControllerBase
     {
         private readonly PasteDbContext _context;
