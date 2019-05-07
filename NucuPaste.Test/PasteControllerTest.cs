@@ -1,7 +1,5 @@
-using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Threading.Tasks;
 using Moq;
 using AutoFixture;
 using Microsoft.Extensions.Logging;
@@ -160,7 +158,7 @@ namespace NucuPaste.Test
         {
             // Arrange
             var options = new DbContextOptionsBuilder<PasteDbContext>()
-                .UseInMemoryDatabase(databaseName: "PasteController_TestDeleteAction_Success").Options;
+                .UseInMemoryDatabase(databaseName: "PasteController_TestDeleteAction_NotFound").Options;
             SeedDb(options, new Paste[] {_testFixtureHelper.Build<Paste>()
                 .With(p => p.Id, 1).Create()});
             NotFoundResult result;
@@ -170,6 +168,71 @@ namespace NucuPaste.Test
             {
                 var pasteController = new PastesController(context, _testMockLogger.Object);
                 result = await pasteController.DeletePaste(1111111) as NotFoundResult;
+            }
+
+            // Assert
+            Debug.Assert(result != null, nameof(result) + " != null");
+            Assert.Equal(404, result.StatusCode);
+        }
+
+        [Fact]
+        public async void PasteController_TestPostAction_Success()
+        {
+            var options = new DbContextOptionsBuilder<PasteDbContext>()
+                .UseInMemoryDatabase(databaseName: "PasteController_TestPostAction_Success").Options;
+            SeedDb(options, new Paste[] {});
+            var newPaste = _testFixtureHelper.Create<Paste>();
+            CreatedAtActionResult result;
+
+            // Act
+            using (var context = new PasteDbContext(options))
+            {
+                var pasteController = new PastesController(context, _testMockLogger.Object);
+                result = await pasteController.PostPaste(newPaste) as CreatedAtActionResult;
+            }
+
+            // Assert
+            Debug.Assert(result != null, nameof(result) + " != null");
+            Assert.Equal(newPaste, result.Value as Paste, Paste.EqualityComparer);
+        }
+        
+        [Fact]
+        public async void PasteController_TestPutAction_Success()
+        {
+            var options = new DbContextOptionsBuilder<PasteDbContext>()
+                .UseInMemoryDatabase(databaseName: "PasteController_TestPutAction_Success").Options;
+            SeedDb(options, new Paste[] 
+                {_testFixtureHelper.Build<Paste>().With(p => p.Id, 1).Create()});
+            var newPaste = _testFixtureHelper.Build<Paste>().With(p => p.Id, 1).Create();
+            OkObjectResult result;
+
+            // Act
+            using (var context = new PasteDbContext(options))
+            {
+                var pasteController = new PastesController(context, _testMockLogger.Object);
+                result = await pasteController.PutPaste(newPaste.Id, newPaste) as OkObjectResult;
+            }
+
+            // Assert
+            Debug.Assert(result != null, nameof(result) + " != null");
+            Assert.Equal(newPaste, result.Value as Paste, Paste.EqualityComparer);
+        }
+        
+        [Fact]
+        public async void PasteController_TestPutAction_Failure()
+        {
+            var options = new DbContextOptionsBuilder<PasteDbContext>()
+                .UseInMemoryDatabase(databaseName: "PasteController_TestPutAction_Failure").Options;
+            SeedDb(options, new Paste[] 
+                {_testFixtureHelper.Build<Paste>().With(p => p.Id, 1).Create()});
+            var newPaste = _testFixtureHelper.Build<Paste>().With(p => p.Id, 2).Create();
+            NotFoundResult result;
+
+            // Act
+            using (var context = new PasteDbContext(options))
+            {
+                var pasteController = new PastesController(context, _testMockLogger.Object);
+                result = await pasteController.PutPaste(2, newPaste) as NotFoundResult;
             }
 
             // Assert
