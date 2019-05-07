@@ -7,6 +7,10 @@ These are my milestones for now:
 - Implement Swagger.
 - Implement versioning.
 - Check how to keep some model fields secret.
+- Write basic tests
+
+Todo:
+
 - Implement authentication.
 - Improve Model.
-- Implement MongoDB/Postresql support.
+- Implement MongoDB/PostreSQL support.
