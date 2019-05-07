@@ -7,7 +7,7 @@
             "type": "process",
             "args": [
                 "build",
-                "${workspaceFolder}/NucuPaste/NucuPaste.csproj"
+                "${workspaceFolder}/src/NucuPaste/NucuPaste.csproj"
             ],
             "problemMatcher": "$tsc"
         },
@@ -17,7 +17,7 @@
             "type": "process",
             "args": [
                 "publish",
-                "${workspaceFolder}/NucuPaste/NucuPaste.csproj"
+                "${workspaceFolder}/src/NucuPaste/NucuPaste.csproj"
             ],
             "problemMatcher": "$tsc"
         },
@@ -28,7 +28,7 @@
             "args": [
                 "watch",
                 "run",
-                "${workspaceFolder}/NucuPaste/NucuPaste.csproj"
+                "${workspaceFolder}/src/NucuPaste/NucuPaste.csproj"
             ],
             "problemMatcher": "$tsc"
         }

@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.28307.572
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NucuPaste", "NucuPaste\NucuPaste.csproj", "{F1C4D53B-7DB0-4C9C-B9CC-4A9526F3F8D5}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NucuPaste", "src\NucuPaste\NucuPaste.csproj", "{F1C4D53B-7DB0-4C9C-B9CC-4A9526F3F8D5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NucuPaste.Test", "NucuPaste.Test\NucuPaste.Test.csproj", "{DA2C8C33-49B7-41B6-8FC8-B8C87CC2DFD6}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NucuPaste.Test", "test\NucuPaste.Test\NucuPaste.Test.csproj", "{DA2C8C33-49B7-41B6-8FC8-B8C87CC2DFD6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

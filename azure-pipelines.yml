@@ -15,4 +15,4 @@ steps:
 - task: DotNetCoreCLI@2
   inputs:
     command: test
-    projects: '**/*.csproj'
+    projects: './test/**/*.csproj'
