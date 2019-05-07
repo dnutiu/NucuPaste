@@ -13,8 +13,8 @@ namespace NucuPaste.Controllers
 {
     [ApiController]
     [ApiExplorerSettings(GroupName = "v1")]
-    [ApiVersion( "1.0" )]
-    [Route( "api/v{version:apiVersion}/[controller]" )]
+    [ApiVersion( "1" )]
+    [Route( "api/v{version}/[controller]" )]
     public class PastesController : ControllerBase
     {
         private readonly PasteDbContext _context;
@@ -99,7 +99,7 @@ namespace NucuPaste.Controllers
         [ProducesResponseType(typeof(IDictionary<string, string>), 400)]
         [ProducesResponseType(typeof(Paste), 201)]
         [HttpPost]
-        public async Task<IActionResult> PostPaste([FromBody] Paste paste)
+        public async Task<IActionResult> PostPaste([FromBody] Paste paste, ApiVersion apiVersion)
         {
             if (!ModelState.IsValid)
             {
@@ -109,8 +109,7 @@ namespace NucuPaste.Controllers
             _context.Pastes.Add(paste);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetPaste", 
-            new { id = paste.Id }, paste);
+            return CreatedAtAction("GetPaste", new { id = paste.Id, version = apiVersion.ToString() }, paste);
         }
 
         // DELETE: api/Pastes/5

@@ -1,18 +1,18 @@
 using System.Collections.Generic;
 using System.Diagnostics;
-using Moq;
+using System.Linq;
 using AutoFixture;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Moq;
 using NucuPaste.Controllers;
 using NucuPaste.Data;
 using NucuPaste.Models;
 using Xunit;
-using Microsoft.EntityFrameworkCore;
-using System.Linq;
-using Microsoft.AspNetCore.Mvc;
 using Xunit.Abstractions;
 
-namespace NucuPaste.Test
+namespace NucuPaste.Test.Unit.Controller
 {
     public class PasteControllerTest
     {
@@ -188,7 +188,7 @@ namespace NucuPaste.Test
             using (var context = new PasteDbContext(options))
             {
                 var pasteController = new PastesController(context, _testMockLogger.Object);
-                result = await pasteController.PostPaste(newPaste) as CreatedAtActionResult;
+                result = await pasteController.PostPaste(newPaste, ApiVersion.Default) as CreatedAtActionResult;
             }
 
             // Assert

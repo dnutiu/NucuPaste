@@ -31,7 +31,7 @@ namespace NucuPaste
             services.AddDbContext<PasteDbContext>(options => options.UseInMemoryDatabase("Paste"));
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
-            services.AddApiVersioning();
+            services.AddApiVersioning(options => { options.AssumeDefaultVersionWhenUnspecified = true; });
             
             // Add Swagger Generator
             services.AddSwaggerGen(c =>
