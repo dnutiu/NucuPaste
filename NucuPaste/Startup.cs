@@ -29,7 +29,7 @@ namespace NucuPaste
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<PasteDbContext>(options => options.UseInMemoryDatabase("Paste"));
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
             services.AddApiVersioning();
             
