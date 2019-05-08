@@ -8,7 +8,7 @@ using NucuPaste.Api.Services;
 namespace NucuPaste.Api.Controllers
 {
     [ApiExplorerSettings(GroupName = "v1")]
-    [ApiVersion( "1" )]
+    [ApiVersion("1")]
     public class PastesController : ApiBaseController
     {
         private readonly PasteService _pasteService;
@@ -16,7 +16,7 @@ namespace NucuPaste.Api.Controllers
         public PastesController(ILogger<PastesController> logger, PasteService pasteService)
         {
             _pasteService = pasteService;
-            
+
             logger.LogInformation("{} says hello!", nameof(PastesController));
         }
 
@@ -65,7 +65,7 @@ namespace NucuPaste.Api.Controllers
             {
                 return NotFound();
             }
-            
+
             return Ok(paste);
         }
 
@@ -80,7 +80,7 @@ namespace NucuPaste.Api.Controllers
 
             await _pasteService.Create(paste);
 
-            return CreatedAtAction("GetPaste", new { id = paste.Id, version = apiVersion.ToString() }, paste);
+            return CreatedAtAction("GetPaste", new {id = paste.Id, version = apiVersion.ToString()}, paste);
         }
 
         // DELETE: api/Pastes/5
@@ -92,8 +92,8 @@ namespace NucuPaste.Api.Controllers
                 return BadRequest(ModelState);
             }
 
-            var paste = await _pasteService.DeleteById(id);
-            if (paste == false)
+            var deleted = await _pasteService.DeleteById(id);
+            if (deleted == false)
             {
                 return NotFound();
             }

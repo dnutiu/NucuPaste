@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using NucuPaste.Api.Data;
 using NucuPaste.Api.Models;
+// ReSharper disable MemberCanBePrivate.Global
 
 namespace NucuPaste.Api.Services
 {
@@ -12,7 +13,7 @@ namespace NucuPaste.Api.Services
     {
         private readonly NucuPasteContext _context;
 
-        internal bool PasteExists(long id)
+        protected bool PasteExists(long id)
         {
             return _context.Pastes.Any(e => e.Id == id);
         }
@@ -46,7 +47,7 @@ namespace NucuPaste.Api.Services
         {
             var paste = await GetById(id);
             if (paste == null) return false;
-            
+
             _context.Pastes.Remove(paste);
             await _context.SaveChangesAsync();
 
@@ -73,9 +74,8 @@ namespace NucuPaste.Api.Services
                     throw;
                 }
             }
+
             return true;
         }
-
-
     }
 }

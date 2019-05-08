@@ -1,18 +1,16 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+// ReSharper disable MemberCanBePrivate.Global
 
 namespace NucuPaste.Api.Models
 {
     public class Paste
     {
-        [Key]
-        public long Id { get; set; }
+        [Key] public long Id { get; set; }
 
-        [Required]
-        public string FileName { get; set; }
-
-        [Required]
-        public string FileContent { get; set; }
+        [Required] public string FileName { get; set; }
+        
+        [Required] public string FileContent { get; set; }
 
         private sealed class EqualityComparerClass : IEqualityComparer<Paste>
         {
@@ -22,7 +20,8 @@ namespace NucuPaste.Api.Models
                 if (ReferenceEquals(x, null)) return false;
                 if (ReferenceEquals(y, null)) return false;
                 if (x.GetType() != y.GetType()) return false;
-                return x.Id == y.Id && string.Equals(x.FileName, y.FileName) && string.Equals(x.FileContent, y.FileContent);
+                return x.Id == y.Id && string.Equals(x.FileName, y.FileName) &&
+                       string.Equals(x.FileContent, y.FileContent);
             }
 
             public int GetHashCode(Paste obj)

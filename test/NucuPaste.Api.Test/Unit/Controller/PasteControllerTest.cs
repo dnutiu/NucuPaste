@@ -10,7 +10,6 @@ using NucuPaste.Api.Data;
 using NucuPaste.Api.Models;
 using NucuPaste.Api.Services;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace NucuPaste.Api.Test.Unit.Controller
 {
@@ -130,8 +129,11 @@ namespace NucuPaste.Api.Test.Unit.Controller
             // Arrange
             var options = new DbContextOptionsBuilder<NucuPasteContext>()
                 .UseInMemoryDatabase(databaseName: "PasteController_TestDeleteAction_Success").Options;
-            SeedDb(options, new Paste[] {_testFixtureHelper.Build<Paste>()
-                .With(p => p.Id, 1).Create()});
+            SeedDb(options, new Paste[]
+            {
+                _testFixtureHelper.Build<Paste>()
+                    .With(p => p.Id, 1).Create()
+            });
             NoContentResult result;
 
             // Act
@@ -146,7 +148,7 @@ namespace NucuPaste.Api.Test.Unit.Controller
             {
                 Debug.Assert(result != null, nameof(result) + " != null");
                 Assert.Equal(204, result.StatusCode);
-                var res = await context.Pastes.FindAsync((long)1);
+                var res = await context.Pastes.FindAsync((long) 1);
                 Assert.Null(res);
             }
         }
@@ -157,8 +159,11 @@ namespace NucuPaste.Api.Test.Unit.Controller
             // Arrange
             var options = new DbContextOptionsBuilder<NucuPasteContext>()
                 .UseInMemoryDatabase(databaseName: "PasteController_TestDeleteAction_NotFound").Options;
-            SeedDb(options, new Paste[] {_testFixtureHelper.Build<Paste>()
-                .With(p => p.Id, 1).Create()});
+            SeedDb(options, new Paste[]
+            {
+                _testFixtureHelper.Build<Paste>()
+                    .With(p => p.Id, 1).Create()
+            });
             NotFoundResult result;
 
             // Act
