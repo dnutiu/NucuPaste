@@ -17,7 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\NucuPaste\NucuPaste.csproj" />
+    <ProjectReference Include="..\..\src\NucuPaste.Api\NucuPaste.Api.csproj" />
   </ItemGroup>
 
 </Project>
