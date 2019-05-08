@@ -198,7 +198,8 @@ namespace NucuPaste.Api.Test.Unit.Controller
 
             // Assert
             Debug.Assert(result != null, nameof(result) + " != null");
-            Assert.Equal(newPaste, result.Value as Paste, Paste.EqualityComparer);
+            Assert.Equal(newPaste.FileContent, (result.Value as Paste)?.FileContent);
+            Assert.Equal(newPaste.FileName, (result.Value as Paste)?.FileName);
         }
 
         [Fact]

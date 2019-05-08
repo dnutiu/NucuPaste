@@ -7,18 +7,20 @@ using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace NucuPaste.Api.Models
 {
-    public class Paste
+    // PasteBindingModel used to bind only certain fields of the Paste model.
+    public class PasteBindingModel 
     {
-        [Key] public Guid Id { get; set; }
-
         [Required] public string FileName { get; set; }
 
         [Required] public string FileContent { get; set; }
-        
-        [BindNever]
-        public DateTime CreatedAt { get; set; }
+    }
+    
+    public class Paste : PasteBindingModel
+    {
+        [Key] public Guid Id { get; set; }
 
-        [BindNever]
+        public DateTime CreatedAt { get; set; }
+        
         public DateTime? LastUpdated { get; set; }
 
         private sealed class PasteEqualityComparer : IEqualityComparer<Paste>

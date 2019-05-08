@@ -49,16 +49,11 @@ namespace NucuPaste.Api.Controllers
 
         // PUT: api/Pastes/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutPaste([FromRoute] Guid id, [FromBody] Paste paste)
+        public async Task<IActionResult> PutPaste([FromRoute] Guid id, [FromBody] PasteBindingModel paste)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
-            }
-
-            if (id != paste.Id)
-            {
-                return BadRequest();
             }
 
             var updated = await _pasteService.Update(id, paste);
@@ -72,14 +67,14 @@ namespace NucuPaste.Api.Controllers
 
         // POST: api/Pastes
         [HttpPost]
-        public async Task<IActionResult> PostPaste([FromBody] Paste paste, ApiVersion apiVersion)
+        public async Task<IActionResult> PostPaste([FromBody] PasteBindingModel bindingModel, ApiVersion apiVersion)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            await _pasteService.Create(paste);
+            var paste = await _pasteService.Create(bindingModel);
 
             return CreatedAtAction("GetPaste", new {id = paste.Id, version = apiVersion.ToString()}, paste);
         }

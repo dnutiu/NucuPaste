@@ -35,10 +35,16 @@ namespace NucuPaste.Api.Services
             return await _context.Pastes.FindAsync(id);
         }
 
-        public async Task<Paste> Create(Paste paste)
+        public async Task<Paste> Create(PasteBindingModel pasteBinding)
         {
-            paste.Id = Guid.NewGuid();
-            paste.CreatedAt = DateTime.Now;
+            var paste = new Paste
+            {
+                Id = Guid.NewGuid(),
+                CreatedAt = DateTime.Now,
+                FileName = pasteBinding.FileName,
+                FileContent = pasteBinding.FileContent
+            };
+
             _context.Pastes.Add(paste);
             await _context.SaveChangesAsync();
             return paste;
@@ -55,7 +61,7 @@ namespace NucuPaste.Api.Services
             return true;
         }
 
-        public async Task<bool> Update(Guid id, Paste paste)
+        public async Task<bool> Update(Guid id, PasteBindingModel paste)
         {
             // We need to search for the old paste in order to get it's createdAt date.
             var oldPaste = await _context.Pastes.FindAsync(id);
@@ -64,13 +70,13 @@ namespace NucuPaste.Api.Services
                 return false;
             }
             
-            // Untrack old paste entry.
-            _context.Entry(oldPaste).State = EntityState.Detached;
-            
-            paste.LastUpdated = DateTime.Now;
-            paste.CreatedAt = oldPaste.CreatedAt;
+            // Update fields
+            oldPaste.FileName = paste.FileName;
+            oldPaste.FileContent = paste.FileContent;
+            oldPaste.LastUpdated = DateTime.Now;
+
             // Tell EF that the state of the paste has been modified.
-            _context.Entry(paste).State = EntityState.Modified;
+            _context.Entry(oldPaste).State = EntityState.Modified;
             await _context.SaveChangesAsync();
 
             return true;
