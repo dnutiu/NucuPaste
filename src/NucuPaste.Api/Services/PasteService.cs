@@ -38,6 +38,7 @@ namespace NucuPaste.Api.Services
         public async Task<Paste> Create(Paste paste)
         {
             paste.Id = Guid.NewGuid();
+            paste.CreatedAt = DateTime.Now;
             _context.Pastes.Add(paste);
             await _context.SaveChangesAsync();
             return paste;
@@ -56,25 +57,21 @@ namespace NucuPaste.Api.Services
 
         public async Task<bool> Update(Guid id, Paste paste)
         {
+            // We need to search for the old paste in order to get it's createdAt date.
+            var oldPaste = await _context.Pastes.FindAsync(id);
+            if (oldPaste == null)
+            {
+                return false;
+            }
+            
+            // Untrack old paste entry.
+            _context.Entry(oldPaste).State = EntityState.Detached;
+            
+            paste.LastUpdated = DateTime.Now;
+            paste.CreatedAt = oldPaste.CreatedAt;
             // Tell EF that the state of the paste has been modified.
             _context.Entry(paste).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                var pasteExists = await PasteExists(id);
-                if (pasteExists == false)
-                {
-                    return false;
-                }
-                else
-                {
-                    throw;
-                }
-            }
+            await _context.SaveChangesAsync();
 
             return true;
         }
