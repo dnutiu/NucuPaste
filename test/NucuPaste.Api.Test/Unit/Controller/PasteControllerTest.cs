@@ -12,7 +12,7 @@ using NucuPaste.Models;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace NucuPaste.Test.Unit.Controller
+namespace NucuPaste.Api.Test.Unit.Controller
 {
     public class PasteControllerTest
     {
