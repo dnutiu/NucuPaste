@@ -7,15 +7,13 @@ using NucuPaste.Api.Services;
 
 namespace NucuPaste.Api.Controllers
 {
-    [ApiController]
     [ApiExplorerSettings(GroupName = "v1")]
     [ApiVersion( "1" )]
-    [Route( "api/v{version:apiVersion}/[controller]")]
-    public class PastesController : ControllerBase
+    public class PastesController : ApiBaseController
     {
         private readonly PasteService _pasteService;
 
-        public PastesController(ILogger logger, PasteService pasteService)
+        public PastesController(ILogger<PastesController> logger, PasteService pasteService)
         {
             _pasteService = pasteService;
             
