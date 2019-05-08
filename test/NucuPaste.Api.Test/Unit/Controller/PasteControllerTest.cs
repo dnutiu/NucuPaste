@@ -148,11 +148,11 @@ namespace NucuPaste.Test.Unit.Controller
             {
                 Debug.Assert(result != null, nameof(result) + " != null");
                 Assert.Equal(200, result.StatusCode);
-                var res = await context.Pastes.FindAsync( (long) 1);
+                var res = await context.Pastes.FindAsync((long)1);
                 Assert.Null(res);
             }
         }
-        
+
         [Fact]
         public async void PasteController_TestDeleteAction_NotFound()
         {
@@ -180,7 +180,7 @@ namespace NucuPaste.Test.Unit.Controller
         {
             var options = new DbContextOptionsBuilder<PasteDbContext>()
                 .UseInMemoryDatabase(databaseName: "PasteController_TestPostAction_Success").Options;
-            SeedDb(options, new Paste[] {});
+            SeedDb(options, new Paste[] { });
             var newPaste = _testFixtureHelper.Create<Paste>();
             CreatedAtActionResult result;
 
@@ -195,13 +195,13 @@ namespace NucuPaste.Test.Unit.Controller
             Debug.Assert(result != null, nameof(result) + " != null");
             Assert.Equal(newPaste, result.Value as Paste, Paste.EqualityComparer);
         }
-        
+
         [Fact]
         public async void PasteController_TestPutAction_Success()
         {
             var options = new DbContextOptionsBuilder<PasteDbContext>()
                 .UseInMemoryDatabase(databaseName: "PasteController_TestPutAction_Success").Options;
-            SeedDb(options, new Paste[] 
+            SeedDb(options, new Paste[]
                 {_testFixtureHelper.Build<Paste>().With(p => p.Id, 1).Create()});
             var newPaste = _testFixtureHelper.Build<Paste>().With(p => p.Id, 1).Create();
             OkObjectResult result;
@@ -217,13 +217,13 @@ namespace NucuPaste.Test.Unit.Controller
             Debug.Assert(result != null, nameof(result) + " != null");
             Assert.Equal(newPaste, result.Value as Paste, Paste.EqualityComparer);
         }
-        
+
         [Fact]
         public async void PasteController_TestPutAction_Failure()
         {
             var options = new DbContextOptionsBuilder<PasteDbContext>()
                 .UseInMemoryDatabase(databaseName: "PasteController_TestPutAction_Failure").Options;
-            SeedDb(options, new Paste[] 
+            SeedDb(options, new Paste[]
                 {_testFixtureHelper.Build<Paste>().With(p => p.Id, 1).Create()});
             var newPaste = _testFixtureHelper.Build<Paste>().With(p => p.Id, 2).Create();
             NotFoundResult result;
