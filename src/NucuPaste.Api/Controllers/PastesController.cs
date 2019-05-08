@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -29,7 +30,7 @@ namespace NucuPaste.Api.Controllers
 
         // GET: api/Pastes/5
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetPaste([FromRoute] long id)
+        public async Task<IActionResult> GetPaste([FromRoute] Guid id)
         {
             if (!ModelState.IsValid)
             {
@@ -48,7 +49,7 @@ namespace NucuPaste.Api.Controllers
 
         // PUT: api/Pastes/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutPaste([FromRoute] long id, [FromBody] Paste paste)
+        public async Task<IActionResult> PutPaste([FromRoute] Guid id, [FromBody] Paste paste)
         {
             if (!ModelState.IsValid)
             {
@@ -85,7 +86,7 @@ namespace NucuPaste.Api.Controllers
 
         // DELETE: api/Pastes/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeletePaste([FromRoute] long id)
+        public async Task<IActionResult> DeletePaste([FromRoute] Guid id)
         {
             if (!ModelState.IsValid)
             {

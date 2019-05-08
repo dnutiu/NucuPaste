@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using NucuPaste.Api.Data;
 using NucuPaste.Api.Models;
-// ReSharper disable MemberCanBePrivate.Global
 
 namespace NucuPaste.Api.Services
 {
@@ -13,9 +12,9 @@ namespace NucuPaste.Api.Services
     {
         private readonly NucuPasteContext _context;
 
-        protected bool PasteExists(long id)
+        private async Task<bool> PasteExists(Guid id)
         {
-            return _context.Pastes.Any(e => e.Id == id);
+            return await _context.Pastes.AnyAsync(p => p.Id == id);
         }
 
         public PasteService(NucuPasteContext context)
@@ -31,19 +30,20 @@ namespace NucuPaste.Api.Services
             return pastes;
         }
 
-        public async Task<Paste> GetById(long id)
+        public async Task<Paste> GetById(Guid id)
         {
             return await _context.Pastes.FindAsync(id);
         }
 
         public async Task<Paste> Create(Paste paste)
         {
+            paste.Id = Guid.NewGuid();
             _context.Pastes.Add(paste);
             await _context.SaveChangesAsync();
             return paste;
         }
 
-        public async Task<bool> DeleteById(long id)
+        public async Task<bool> DeleteById(Guid id)
         {
             var paste = await GetById(id);
             if (paste == null) return false;
@@ -54,7 +54,7 @@ namespace NucuPaste.Api.Services
             return true;
         }
 
-        public async Task<bool> Update(long id, Paste paste)
+        public async Task<bool> Update(Guid id, Paste paste)
         {
             // Tell EF that the state of the paste has been modified.
             _context.Entry(paste).State = EntityState.Modified;
@@ -65,7 +65,8 @@ namespace NucuPaste.Api.Services
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!PasteExists(id))
+                var pasteExists = await PasteExists(id);
+                if (pasteExists == false)
                 {
                     return false;
                 }

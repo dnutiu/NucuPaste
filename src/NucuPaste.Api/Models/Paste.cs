@@ -1,15 +1,17 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+
 // ReSharper disable MemberCanBePrivate.Global
 
 namespace NucuPaste.Api.Models
 {
     public class Paste
     {
-        [Key] public long Id { get; set; }
+        [Key] public Guid Id { get; set; }
 
         [Required] public string FileName { get; set; }
-        
+
         [Required] public string FileContent { get; set; }
 
         private sealed class EqualityComparerClass : IEqualityComparer<Paste>
