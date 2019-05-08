@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
-namespace NucuPaste.Models
+namespace NucuPaste.Api.Models
 {
     public class Paste
     {

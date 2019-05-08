@@ -1,14 +1,14 @@
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using AutoFixture;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Moq;
-using NucuPaste.Controllers;
-using NucuPaste.Data;
-using NucuPaste.Models;
+using NucuPaste.Api.Controllers;
+using NucuPaste.Api.Data;
+using NucuPaste.Api.Models;
+using NucuPaste.Api.Services;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -16,20 +16,18 @@ namespace NucuPaste.Api.Test.Unit.Controller
 {
     public class PasteControllerTest
     {
-        private readonly ITestOutputHelper _testOutputHelper;
         private readonly Mock<ILogger<PastesController>> _testMockLogger;
         private readonly Fixture _testFixtureHelper;
 
-        public PasteControllerTest(ITestOutputHelper testOutputHelper)
+        public PasteControllerTest()
         {
-            _testOutputHelper = testOutputHelper;
             _testFixtureHelper = new Fixture();
             _testMockLogger = new Mock<ILogger<PastesController>>();
         }
 
-        private static void SeedDb(DbContextOptions<PasteDbContext> options, IEnumerable<Paste> pastes)
+        private static void SeedDb(DbContextOptions<NucuPasteContext> options, IEnumerable<Paste> pastes)
         {
-            using (var context = new PasteDbContext(options))
+            using (var context = new NucuPasteContext(options))
             {
                 foreach (var p in pastes)
                 {
@@ -41,11 +39,11 @@ namespace NucuPaste.Api.Test.Unit.Controller
         }
 
         [Fact]
-        public void PasteController_TestGetAction()
+        public async void PasteController_TestGetAction()
         {
             // Arrange
             List<Paste> results;
-            var options = new DbContextOptionsBuilder<PasteDbContext>()
+            var options = new DbContextOptionsBuilder<NucuPasteContext>()
                 .UseInMemoryDatabase(databaseName: "PasteController_TestGetAction").Options;
             var pastes = new List<Paste>
             {
@@ -57,10 +55,10 @@ namespace NucuPaste.Api.Test.Unit.Controller
             SeedDb(options, pastes);
 
             // Act
-            using (var context = new PasteDbContext(options))
+            using (var context = new NucuPasteContext(options))
             {
-                var pasteController = new PastesController(context, _testMockLogger.Object);
-                results = pasteController.GetPastes().ToList();
+                var pasteController = new PastesController(_testMockLogger.Object, new PasteService(context));
+                results = await pasteController.GetPastes();
             }
 
             // Assert
@@ -76,7 +74,7 @@ namespace NucuPaste.Api.Test.Unit.Controller
             // Arrange
             Paste result;
             var searchedPaste = _testFixtureHelper.Build<Paste>().With(p => p.Id, 1).Create();
-            var options = new DbContextOptionsBuilder<PasteDbContext>()
+            var options = new DbContextOptionsBuilder<NucuPasteContext>()
                 .UseInMemoryDatabase(databaseName: "PasteController_TestGetByIdAction").Options;
             var pastes = new List<Paste>
             {
@@ -86,9 +84,9 @@ namespace NucuPaste.Api.Test.Unit.Controller
             SeedDb(options, pastes);
 
             // Act
-            using (var context = new PasteDbContext(options))
+            using (var context = new NucuPasteContext(options))
             {
-                var pasteController = new PastesController(context, _testMockLogger.Object);
+                var pasteController = new PastesController(_testMockLogger.Object, new PasteService(context));
                 var res = await pasteController.GetPaste(1) as OkObjectResult;
 
                 Debug.Assert(res != null, nameof(res) + " != null");
@@ -103,7 +101,7 @@ namespace NucuPaste.Api.Test.Unit.Controller
         public async void PasteController_TestGetByIdAction_ResultNotFound()
         {
             // Arrange
-            var options = new DbContextOptionsBuilder<PasteDbContext>()
+            var options = new DbContextOptionsBuilder<NucuPasteContext>()
                 .UseInMemoryDatabase(databaseName: "PasteController_TestGetByIdAction").Options;
             var pastes = new List<Paste>
             {
@@ -115,9 +113,9 @@ namespace NucuPaste.Api.Test.Unit.Controller
             NotFoundResult result;
 
             // Act
-            using (var context = new PasteDbContext(options))
+            using (var context = new NucuPasteContext(options))
             {
-                var pasteController = new PastesController(context, _testMockLogger.Object);
+                var pasteController = new PastesController(_testMockLogger.Object, new PasteService(context));
                 result = await pasteController.GetPaste(1111111) as NotFoundResult;
             }
 
@@ -130,24 +128,24 @@ namespace NucuPaste.Api.Test.Unit.Controller
         public async void PasteController_TestDeleteAction_Success()
         {
             // Arrange
-            var options = new DbContextOptionsBuilder<PasteDbContext>()
+            var options = new DbContextOptionsBuilder<NucuPasteContext>()
                 .UseInMemoryDatabase(databaseName: "PasteController_TestDeleteAction_Success").Options;
             SeedDb(options, new Paste[] {_testFixtureHelper.Build<Paste>()
                 .With(p => p.Id, 1).Create()});
-            OkObjectResult result;
+            NoContentResult result;
 
             // Act
-            using (var context = new PasteDbContext(options))
+            using (var context = new NucuPasteContext(options))
             {
-                var pasteController = new PastesController(context, _testMockLogger.Object);
-                result = await pasteController.DeletePaste(1) as OkObjectResult;
+                var pasteController = new PastesController(_testMockLogger.Object, new PasteService(context));
+                result = await pasteController.DeletePaste(1) as NoContentResult;
             }
 
             // Assert
-            using (var context = new PasteDbContext(options))
+            using (var context = new NucuPasteContext(options))
             {
                 Debug.Assert(result != null, nameof(result) + " != null");
-                Assert.Equal(200, result.StatusCode);
+                Assert.Equal(204, result.StatusCode);
                 var res = await context.Pastes.FindAsync((long)1);
                 Assert.Null(res);
             }
@@ -157,16 +155,16 @@ namespace NucuPaste.Api.Test.Unit.Controller
         public async void PasteController_TestDeleteAction_NotFound()
         {
             // Arrange
-            var options = new DbContextOptionsBuilder<PasteDbContext>()
+            var options = new DbContextOptionsBuilder<NucuPasteContext>()
                 .UseInMemoryDatabase(databaseName: "PasteController_TestDeleteAction_NotFound").Options;
             SeedDb(options, new Paste[] {_testFixtureHelper.Build<Paste>()
                 .With(p => p.Id, 1).Create()});
             NotFoundResult result;
 
             // Act
-            using (var context = new PasteDbContext(options))
+            using (var context = new NucuPasteContext(options))
             {
-                var pasteController = new PastesController(context, _testMockLogger.Object);
+                var pasteController = new PastesController(_testMockLogger.Object, new PasteService(context));
                 result = await pasteController.DeletePaste(1111111) as NotFoundResult;
             }
 
@@ -178,16 +176,16 @@ namespace NucuPaste.Api.Test.Unit.Controller
         [Fact]
         public async void PasteController_TestPostAction_Success()
         {
-            var options = new DbContextOptionsBuilder<PasteDbContext>()
+            var options = new DbContextOptionsBuilder<NucuPasteContext>()
                 .UseInMemoryDatabase(databaseName: "PasteController_TestPostAction_Success").Options;
             SeedDb(options, new Paste[] { });
             var newPaste = _testFixtureHelper.Create<Paste>();
             CreatedAtActionResult result;
 
             // Act
-            using (var context = new PasteDbContext(options))
+            using (var context = new NucuPasteContext(options))
             {
-                var pasteController = new PastesController(context, _testMockLogger.Object);
+                var pasteController = new PastesController(_testMockLogger.Object, new PasteService(context));
                 result = await pasteController.PostPaste(newPaste, ApiVersion.Default) as CreatedAtActionResult;
             }
 
@@ -199,7 +197,7 @@ namespace NucuPaste.Api.Test.Unit.Controller
         [Fact]
         public async void PasteController_TestPutAction_Success()
         {
-            var options = new DbContextOptionsBuilder<PasteDbContext>()
+            var options = new DbContextOptionsBuilder<NucuPasteContext>()
                 .UseInMemoryDatabase(databaseName: "PasteController_TestPutAction_Success").Options;
             SeedDb(options, new Paste[]
                 {_testFixtureHelper.Build<Paste>().With(p => p.Id, 1).Create()});
@@ -207,9 +205,9 @@ namespace NucuPaste.Api.Test.Unit.Controller
             OkObjectResult result;
 
             // Act
-            using (var context = new PasteDbContext(options))
+            using (var context = new NucuPasteContext(options))
             {
-                var pasteController = new PastesController(context, _testMockLogger.Object);
+                var pasteController = new PastesController(_testMockLogger.Object, new PasteService(context));
                 result = await pasteController.PutPaste(newPaste.Id, newPaste) as OkObjectResult;
             }
 
@@ -221,7 +219,7 @@ namespace NucuPaste.Api.Test.Unit.Controller
         [Fact]
         public async void PasteController_TestPutAction_Failure()
         {
-            var options = new DbContextOptionsBuilder<PasteDbContext>()
+            var options = new DbContextOptionsBuilder<NucuPasteContext>()
                 .UseInMemoryDatabase(databaseName: "PasteController_TestPutAction_Failure").Options;
             SeedDb(options, new Paste[]
                 {_testFixtureHelper.Build<Paste>().With(p => p.Id, 1).Create()});
@@ -229,9 +227,9 @@ namespace NucuPaste.Api.Test.Unit.Controller
             NotFoundResult result;
 
             // Act
-            using (var context = new PasteDbContext(options))
+            using (var context = new NucuPasteContext(options))
             {
-                var pasteController = new PastesController(context, _testMockLogger.Object);
+                var pasteController = new PastesController(_testMockLogger.Object, new PasteService(context));
                 result = await pasteController.PutPaste(2, newPaste) as NotFoundResult;
             }
 

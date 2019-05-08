@@ -1,15 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using NucuPaste.Data;
-using NucuPaste.Models;
+using NucuPaste.Api.Models;
+using NucuPaste.Api.Services;
 
-namespace NucuPaste.Controllers
+namespace NucuPaste.Api.Controllers
 {
     [ApiController]
     [ApiExplorerSettings(GroupName = "v1")]
@@ -17,28 +13,23 @@ namespace NucuPaste.Controllers
     [Route( "api/v{version:apiVersion}/[controller]")]
     public class PastesController : ControllerBase
     {
-        private readonly PasteDbContext _context;
-        private readonly ILogger _logger;
+        private readonly PasteService _pasteService;
 
-        public PastesController(PasteDbContext context, ILogger<PastesController> logger)
+        public PastesController(ILogger logger, PasteService pasteService)
         {
-            _logger = logger;
-            _context = context;
+            _pasteService = pasteService;
             
-            _logger.LogInformation("{} says hello!", nameof(PastesController));
+            logger.LogInformation("{} says hello!", nameof(PastesController));
         }
 
         // GET: api/Pastes
-        [ProducesResponseType(typeof(IDictionary<string, Paste>), 200)]
         [HttpGet]
-        public IEnumerable<Paste> GetPastes()
+        public async Task<List<Paste>> GetPastes()
         {
-            return _context.Pastes;
+            return await _pasteService.GetAll();
         }
 
         // GET: api/Pastes/5
-        [ProducesResponseType(typeof(IDictionary<string, string>), 404)]
-        [ProducesResponseType(typeof(Paste), 200)]
         [HttpGet("{id}")]
         public async Task<IActionResult> GetPaste([FromRoute] long id)
         {
@@ -47,7 +38,7 @@ namespace NucuPaste.Controllers
                 return BadRequest(ModelState);
             }
 
-            var paste = await _context.Pastes.FindAsync(id);
+            var paste = await _pasteService.GetById(id);
 
             if (paste == null)
             {
@@ -58,9 +49,6 @@ namespace NucuPaste.Controllers
         }
 
         // PUT: api/Pastes/5
-        [ProducesResponseType(typeof(IDictionary<string, string>), 400)]
-        [ProducesResponseType(typeof(IDictionary<string, string>), 404)]
-        [ProducesResponseType(typeof(Paste), 200)]
         [HttpPut("{id}")]
         public async Task<IActionResult> PutPaste([FromRoute] long id, [FromBody] Paste paste)
         {
@@ -74,30 +62,16 @@ namespace NucuPaste.Controllers
                 return BadRequest();
             }
 
-            _context.Entry(paste).State = EntityState.Modified;
-
-            try
+            var updated = await _pasteService.Update(id, paste);
+            if (updated == false)
             {
-                await _context.SaveChangesAsync();
+                return NotFound();
             }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!PasteExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
+            
             return Ok(paste);
         }
 
         // POST: api/Pastes
-        [ProducesResponseType(typeof(IDictionary<string, string>), 400)]
-        [ProducesResponseType(typeof(Paste), 201)]
         [HttpPost]
         public async Task<IActionResult> PostPaste([FromBody] Paste paste, ApiVersion apiVersion)
         {
@@ -106,14 +80,12 @@ namespace NucuPaste.Controllers
                 return BadRequest(ModelState);
             }
 
-            _context.Pastes.Add(paste);
-            await _context.SaveChangesAsync();
+            await _pasteService.Create(paste);
 
             return CreatedAtAction("GetPaste", new { id = paste.Id, version = apiVersion.ToString() }, paste);
         }
 
         // DELETE: api/Pastes/5
-        [ProducesResponseType(typeof(Paste), 200)]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeletePaste([FromRoute] long id)
         {
@@ -122,21 +94,13 @@ namespace NucuPaste.Controllers
                 return BadRequest(ModelState);
             }
 
-            var paste = await _context.Pastes.FindAsync(id);
-            if (paste == null)
+            var paste = await _pasteService.DeleteById(id);
+            if (paste == false)
             {
                 return NotFound();
             }
 
-            _context.Pastes.Remove(paste);
-            await _context.SaveChangesAsync();
-
-            return Ok(paste);
-        }
-
-        private bool PasteExists(long id)
-        {
-            return _context.Pastes.Any(e => e.Id == id);
+            return NoContent();
         }
     }
 }

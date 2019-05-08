@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 
-namespace NucuPaste
+namespace NucuPaste.Api
 {
     public class Program
     {

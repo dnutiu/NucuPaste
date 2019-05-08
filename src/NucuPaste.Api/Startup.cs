@@ -1,20 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
-using NucuPaste.Data;
+using NucuPaste.Api.Data;
+using NucuPaste.Api.Services;
 using Swashbuckle.AspNetCore.Swagger;
 
-namespace NucuPaste
+namespace NucuPaste.Api
 {
     public class Startup
     {
@@ -28,11 +22,13 @@ namespace NucuPaste
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<PasteDbContext>(options => options.UseInMemoryDatabase("Paste"));
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            services.AddDbContext<NucuPasteContext>(options => options.UseInMemoryDatabase("Paste"));
 
-            services.AddApiVersioning(options => { options.AssumeDefaultVersionWhenUnspecified = true; });
+            services.AddScoped<PasteService>();
             
+            
+            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            services.AddApiVersioning(options => { options.AssumeDefaultVersionWhenUnspecified = true; });
             // Add Swagger Generator
             services.AddSwaggerGen(c =>
             {
