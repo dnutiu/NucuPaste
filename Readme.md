@@ -9,3 +9,12 @@ this repo can also serve as an example on how to build web applications APIs usi
 
 In order to track my progress and use continuous integration this project uses 
 [Azure DevOps](https://azure.microsoft.com/en-us/services/devops/), a free service provided by Microsoft.
+
+## Developing
+
+__Prerequisites__
+
+* ASP.Net Core 2
+* Docker
+
+Start the services with the `docker-compose up` command and jump right in!
