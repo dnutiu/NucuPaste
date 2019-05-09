@@ -22,18 +22,21 @@ namespace NucuPaste.Api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<NucuPasteContext>(options => options.UseInMemoryDatabase("Paste"));
+            // Database Configuration
+            services.AddDbContext<NucuPasteContext>(options =>
+            {
+                options.UseNpgsql(Configuration.GetSection("DatabaseConfig")["PostgresSQL"]);
+            });
 
+            // Application Services Configuration
             services.AddScoped<PasteService>();
             
-            
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
             services.AddApiVersioning(options => { options.AssumeDefaultVersionWhenUnspecified = true; });
-            // Add Swagger Generator
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new Info { Title = "NucuPaste API V1", Version = "v1" });
             });
+            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

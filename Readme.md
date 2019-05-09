@@ -17,4 +17,5 @@ __Prerequisites__
 * ASP.Net Core 2
 * Docker
 
-Start the services with the `docker-compose up` command and jump right in!
+Start the services with the `docker-compose up`, create the database tables using `dotnet ef database update`
+and jump right in!
