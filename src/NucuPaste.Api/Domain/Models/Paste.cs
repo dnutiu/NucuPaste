@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 // ReSharper disable MemberCanBePrivate.Global
 
-namespace NucuPaste.Api.Models
+namespace NucuPaste.Api.Domain.Models
 {
     // PasteBindingModel used to bind only certain fields of the Paste model.
     public class PasteBindingModel 

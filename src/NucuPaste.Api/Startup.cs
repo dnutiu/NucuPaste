@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using NucuPaste.Api.Data;
-using NucuPaste.Api.Services;
+using NucuPaste.Api.Domain.Repositories;
 using Swashbuckle.AspNetCore.Swagger;
 
 namespace NucuPaste.Api
@@ -29,7 +29,7 @@ namespace NucuPaste.Api
             });
 
             // Application Services Configuration
-            services.AddScoped<PasteService>();
+            services.AddScoped<PasteRepository>();
             
             services.AddApiVersioning(options => { options.AssumeDefaultVersionWhenUnspecified = true; });
             services.AddSwaggerGen(c =>

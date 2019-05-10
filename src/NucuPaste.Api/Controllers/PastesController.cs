@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using NucuPaste.Api.Models;
-using NucuPaste.Api.Services;
+using NucuPaste.Api.Domain.Models;
+using NucuPaste.Api.Domain.Repositories;
 
 namespace NucuPaste.Api.Controllers
 {
@@ -12,11 +12,11 @@ namespace NucuPaste.Api.Controllers
     [ApiVersion("1")]
     public class PastesController : ApiBaseController
     {
-        private readonly PasteService _pasteService;
+        private readonly PasteRepository _pasteRepository;
 
-        public PastesController(ILogger<PastesController> logger, PasteService pasteService)
+        public PastesController(ILogger<PastesController> logger, PasteRepository pasteRepository)
         {
-            _pasteService = pasteService;
+            _pasteRepository = pasteRepository;
 
             logger.LogInformation("{} says hello!", nameof(PastesController));
         }
@@ -25,7 +25,7 @@ namespace NucuPaste.Api.Controllers
         [HttpGet]
         public async Task<List<Paste>> GetPastes()
         {
-            return await _pasteService.GetAll();
+            return await _pasteRepository.GetAll();
         }
 
         // GET: api/Pastes/5
@@ -37,7 +37,7 @@ namespace NucuPaste.Api.Controllers
                 return BadRequest(ModelState);
             }
 
-            var paste = await _pasteService.GetById(id);
+            var paste = await _pasteRepository.GetById(id);
 
             if (paste == null)
             {
@@ -56,7 +56,7 @@ namespace NucuPaste.Api.Controllers
                 return BadRequest(ModelState);
             }
 
-            var updated = await _pasteService.Update(id, paste);
+            var updated = await _pasteRepository.Update(id, paste);
             if (updated == false)
             {
                 return NotFound();
@@ -74,7 +74,7 @@ namespace NucuPaste.Api.Controllers
                 return BadRequest(ModelState);
             }
 
-            var paste = await _pasteService.Create(bindingModel);
+            var paste = await _pasteRepository.Create(bindingModel);
 
             return CreatedAtAction("GetPaste", new {id = paste.Id, version = apiVersion.ToString()}, paste);
         }
@@ -88,7 +88,7 @@ namespace NucuPaste.Api.Controllers
                 return BadRequest(ModelState);
             }
 
-            var deleted = await _pasteService.DeleteById(id);
+            var deleted = await _pasteRepository.DeleteById(id);
             if (deleted == false)
             {
                 return NotFound();

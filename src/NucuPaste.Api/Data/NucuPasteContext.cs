@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using NucuPaste.Api.Models;
+using NucuPaste.Api.Domain.Models;
 
 namespace NucuPaste.Api.Data
 {

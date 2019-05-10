@@ -4,11 +4,11 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using NucuPaste.Api.Data;
-using NucuPaste.Api.Models;
+using NucuPaste.Api.Domain.Models;
 
-namespace NucuPaste.Api.Services
+namespace NucuPaste.Api.Domain.Repositories
 {
-    public class PasteService
+    public class PasteRepository
     {
         private readonly NucuPasteContext _context;
 
@@ -17,7 +17,7 @@ namespace NucuPaste.Api.Services
             return await _context.Pastes.AnyAsync(p => p.Id == id);
         }
 
-        public PasteService(NucuPasteContext context)
+        public PasteRepository(NucuPasteContext context)
         {
             _context = context;
         }

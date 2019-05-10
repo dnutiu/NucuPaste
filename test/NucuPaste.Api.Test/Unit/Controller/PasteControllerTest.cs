@@ -8,8 +8,8 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using NucuPaste.Api.Controllers;
 using NucuPaste.Api.Data;
-using NucuPaste.Api.Models;
-using NucuPaste.Api.Services;
+using NucuPaste.Api.Domain.Models;
+using NucuPaste.Api.Domain.Repositories;
 using Xunit;
 
 namespace NucuPaste.Api.Test.Unit.Controller
@@ -57,7 +57,7 @@ namespace NucuPaste.Api.Test.Unit.Controller
             // Act
             using (var context = new NucuPasteContext(options))
             {
-                var pasteController = new PastesController(_testMockLogger.Object, new PasteService(context));
+                var pasteController = new PastesController(_testMockLogger.Object, new PasteRepository(context));
                 results = await pasteController.GetPastes();
             }
 
@@ -87,7 +87,7 @@ namespace NucuPaste.Api.Test.Unit.Controller
             // Act
             using (var context = new NucuPasteContext(options))
             {
-                var pasteController = new PastesController(_testMockLogger.Object, new PasteService(context));
+                var pasteController = new PastesController(_testMockLogger.Object, new PasteRepository(context));
                 var res = await pasteController.GetPaste(savedGuid) as OkObjectResult;
 
                 Debug.Assert(res != null, nameof(res) + " != null");
@@ -116,7 +116,7 @@ namespace NucuPaste.Api.Test.Unit.Controller
             // Act
             using (var context = new NucuPasteContext(options))
             {
-                var pasteController = new PastesController(_testMockLogger.Object, new PasteService(context));
+                var pasteController = new PastesController(_testMockLogger.Object, new PasteRepository(context));
                 result = await pasteController.GetPaste(Guid.NewGuid()) as NotFoundResult;
             }
 
@@ -142,7 +142,7 @@ namespace NucuPaste.Api.Test.Unit.Controller
             // Act
             using (var context = new NucuPasteContext(options))
             {
-                var pasteController = new PastesController(_testMockLogger.Object, new PasteService(context));
+                var pasteController = new PastesController(_testMockLogger.Object, new PasteRepository(context));
                 result = await pasteController.DeletePaste(savedGuid) as NoContentResult;
             }
 
@@ -171,7 +171,7 @@ namespace NucuPaste.Api.Test.Unit.Controller
             // Act
             using (var context = new NucuPasteContext(options))
             {
-                var pasteController = new PastesController(_testMockLogger.Object, new PasteService(context));
+                var pasteController = new PastesController(_testMockLogger.Object, new PasteRepository(context));
                 result = await pasteController.DeletePaste(Guid.NewGuid()) as NotFoundResult;
             }
 
@@ -192,7 +192,7 @@ namespace NucuPaste.Api.Test.Unit.Controller
             // Act
             using (var context = new NucuPasteContext(options))
             {
-                var pasteController = new PastesController(_testMockLogger.Object, new PasteService(context));
+                var pasteController = new PastesController(_testMockLogger.Object, new PasteRepository(context));
                 result = await pasteController.PostPaste(newPaste, ApiVersion.Default) as CreatedAtActionResult;
             }
 
@@ -216,7 +216,7 @@ namespace NucuPaste.Api.Test.Unit.Controller
             // Act
             using (var context = new NucuPasteContext(options))
             {
-                var pasteController = new PastesController(_testMockLogger.Object, new PasteService(context));
+                var pasteController = new PastesController(_testMockLogger.Object, new PasteRepository(context));
                 result = await pasteController.PutPaste(newPaste.Id, newPaste) as OkObjectResult;
             }
 
@@ -239,7 +239,7 @@ namespace NucuPaste.Api.Test.Unit.Controller
             // Act
             using (var context = new NucuPasteContext(options))
             {
-                var pasteController = new PastesController(_testMockLogger.Object, new PasteService(context));
+                var pasteController = new PastesController(_testMockLogger.Object, new PasteRepository(context));
                 result = await pasteController.PutPaste(savedGuid, newPaste) as NotFoundResult;
             }
 
