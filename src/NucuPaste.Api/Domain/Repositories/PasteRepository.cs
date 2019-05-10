@@ -37,13 +37,8 @@ namespace NucuPaste.Api.Domain.Repositories
 
         public async Task<Paste> Create(PasteBindingModel pasteBinding)
         {
-            var paste = new Paste
-            {
-                Id = Guid.NewGuid(),
-                CreatedAt = DateTime.Now,
-                FileName = pasteBinding.FileName,
-                FileContent = pasteBinding.FileContent
-            };
+            var paste = new Paste(pasteBinding.FileName,
+                pasteBinding.FileContent);
 
             _context.Pastes.Add(paste);
             await _context.SaveChangesAsync();
@@ -69,11 +64,9 @@ namespace NucuPaste.Api.Domain.Repositories
             {
                 return false;
             }
-            
+
             // Update fields
-            oldPaste.FileName = paste.FileName;
-            oldPaste.FileContent = paste.FileContent;
-            oldPaste.LastUpdated = DateTime.Now;
+            oldPaste.Update(paste.FileName, paste.FileContent);
 
             // Tell EF that the state of the paste has been modified.
             _context.Entry(oldPaste).State = EntityState.Modified;

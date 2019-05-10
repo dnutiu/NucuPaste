@@ -7,20 +7,39 @@ using System.ComponentModel.DataAnnotations;
 namespace NucuPaste.Api.Domain.Models
 {
     // PasteBindingModel used to bind only certain fields of the Paste model.
-    public class PasteBindingModel 
+    public class PasteBindingModel
     {
         [Required] public string FileName { get; set; }
 
         [Required] public string FileContent { get; set; }
     }
-    
+
     public class Paste : PasteBindingModel
     {
-        [Key] public Guid Id { get; set; }
+        [Key] public Guid Id { get; protected set; }
 
-        public DateTime CreatedAt { get; set; }
-        
-        public DateTime? LastUpdated { get; set; }
+        public DateTime CreatedAt { get; protected set; }
+
+        public DateTime? LastUpdated { get; protected set; }
+
+        protected Paste()
+        {
+        }
+
+        public Paste(string filename, string fileContent)
+        {
+            Id = Guid.NewGuid();
+            CreatedAt = DateTime.UtcNow;
+            FileName = filename;
+            FileContent = fileContent;
+        }
+
+        public void Update(string filename, string fileContent)
+        {
+            FileName = filename;
+            FileContent = fileContent;
+            LastUpdated = DateTime.UtcNow;
+        }
 
         private sealed class PasteEqualityComparer : IEqualityComparer<Paste>
         {
@@ -30,7 +49,9 @@ namespace NucuPaste.Api.Domain.Models
                 if (ReferenceEquals(x, null)) return false;
                 if (ReferenceEquals(y, null)) return false;
                 if (x.GetType() != y.GetType()) return false;
-                return x.Id.Equals(y.Id) && string.Equals(x.FileName, y.FileName) && string.Equals(x.FileContent, y.FileContent) && x.CreatedAt.Equals(y.CreatedAt) && x.LastUpdated == y.LastUpdated;
+                return x.Id.Equals(y.Id) && string.Equals(x.FileName, y.FileName) &&
+                       string.Equals(x.FileContent, y.FileContent) && x.CreatedAt.Equals(y.CreatedAt) &&
+                       x.LastUpdated == y.LastUpdated;
             }
 
             public int GetHashCode(Paste obj)
