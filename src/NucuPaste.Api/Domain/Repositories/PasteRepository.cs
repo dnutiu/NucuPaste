@@ -12,7 +12,7 @@ namespace NucuPaste.Api.Domain.Repositories
     {
         private readonly NucuPasteContext _context;
 
-        private async Task<bool> PasteExists(Guid id)
+        private async Task<bool> PasteExistsAsync(Guid id)
         {
             return await _context.Pastes.AnyAsync(p => p.Id == id);
         }
@@ -22,7 +22,7 @@ namespace NucuPaste.Api.Domain.Repositories
             _context = context;
         }
 
-        public async Task<List<Paste>> GetAll()
+        public async Task<List<Paste>> GetAllAsync()
         {
             var pastes = await (
                 from p in _context.Pastes.AsNoTracking() select p
@@ -30,7 +30,7 @@ namespace NucuPaste.Api.Domain.Repositories
             return pastes;
         }
 
-        public async Task<Paste> GetById(Guid id)
+        public async Task<Paste> GetByIdAsync(Guid id)
         {
             return await _context.Pastes.FindAsync(id);
         }
@@ -45,9 +45,9 @@ namespace NucuPaste.Api.Domain.Repositories
             return paste;
         }
 
-        public async Task<bool> DeleteById(Guid id)
+        public async Task<bool> DeleteByIdAsync(Guid id)
         {
-            var paste = await GetById(id);
+            var paste = await GetByIdAsync(id);
             if (paste == null) return false;
 
             _context.Pastes.Remove(paste);
@@ -56,7 +56,7 @@ namespace NucuPaste.Api.Domain.Repositories
             return true;
         }
 
-        public async Task<bool> Update(Guid id, PasteBindingModel paste)
+        public async Task<bool> UpdateAsync(Guid id, PasteBindingModel paste)
         {
             // We need to search for the old paste in order to get it's createdAt date.
             var oldPaste = await _context.Pastes.FindAsync(id);

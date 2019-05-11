@@ -25,7 +25,7 @@ namespace NucuPaste.Api.Controllers
         [HttpGet]
         public async Task<List<Paste>> GetPastes()
         {
-            return await _pasteRepository.GetAll();
+            return await _pasteRepository.GetAllAsync();
         }
 
         // GET: api/Pastes/5
@@ -37,7 +37,7 @@ namespace NucuPaste.Api.Controllers
                 return BadRequest(ModelState);
             }
 
-            var paste = await _pasteRepository.GetById(id);
+            var paste = await _pasteRepository.GetByIdAsync(id);
 
             if (paste == null)
             {
@@ -56,7 +56,7 @@ namespace NucuPaste.Api.Controllers
                 return BadRequest(ModelState);
             }
 
-            var updated = await _pasteRepository.Update(id, paste);
+            var updated = await _pasteRepository.UpdateAsync(id, paste);
             if (updated == false)
             {
                 return NotFound();
@@ -88,7 +88,7 @@ namespace NucuPaste.Api.Controllers
                 return BadRequest(ModelState);
             }
 
-            var deleted = await _pasteRepository.DeleteById(id);
+            var deleted = await _pasteRepository.DeleteByIdAsync(id);
             if (deleted == false)
             {
                 return NotFound();
