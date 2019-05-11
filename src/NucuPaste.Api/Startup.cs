@@ -6,6 +6,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using NucuPaste.Api.Data;
 using NucuPaste.Api.Domain.Repositories;
+using NucuPaste.Api.Services;
 using Swashbuckle.AspNetCore.Swagger;
 
 namespace NucuPaste.Api
@@ -29,6 +30,7 @@ namespace NucuPaste.Api
             });
 
             // Application Services Configuration
+            services.AddScoped<IEncrypt, EncryptService>();
             services.AddScoped<PasteRepository>();
             
             services.AddApiVersioning(options => { options.AssumeDefaultVersionWhenUnspecified = true; });

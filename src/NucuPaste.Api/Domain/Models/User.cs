@@ -1,4 +1,8 @@
 using System;
+using System.Globalization;
+using Microsoft.AspNetCore.Identity.UI.V3.Pages.Account.Manage.Internal;
+using NucuPaste.Api.Services;
+
 // ReSharper disable MemberCanBePrivate.Global
 
 namespace NucuPaste.Api.Domain.Models
@@ -18,15 +22,34 @@ namespace NucuPaste.Api.Domain.Models
             
         }
 
-        public User(string email, string username, string password)
+        public User(string email, string username)
         {
             Id = Guid.NewGuid();
             Email = email;
             Username = username;
-            Password = password;
-            CreatedAt = DateTime.Now;
-            // Todo password salt.
+            CreatedAt = DateTime.UtcNow;
             IsDeleted = false;
+        }
+        
+        public User(string email, string username, string password, IEncrypt encryptService)
+        {
+            Id = Guid.NewGuid();
+            Email = email;
+            Username = username;
+            CreatedAt = DateTime.UtcNow;
+            IsDeleted = false;
+            SetPassword(password, encryptService);
+        }
+
+        public void SetPassword(string password, IEncrypt encryptService)
+        {
+            PasswordSalt = encryptService.GetSalt(password);
+            Password = encryptService.GetHash(password, PasswordSalt);
+        }
+
+        public bool ValidatePassword(string password, IEncrypt encryptService)
+        {
+            return Password.Equals(encryptService.GetHash(password, PasswordSalt));
         }
     }
 }
