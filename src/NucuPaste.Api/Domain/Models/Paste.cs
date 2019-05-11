@@ -16,11 +16,11 @@ namespace NucuPaste.Api.Domain.Models
 
     public class Paste : PasteBindingModel
     {
-        [Key] public Guid Id { get; protected set; }
+        [Key] public Guid Id { get; set; }
 
-        public DateTime CreatedAt { get; protected set; }
+        public DateTime CreatedAt { get; set; }
 
-        public DateTime? LastUpdated { get; protected set; }
+        public DateTime? LastUpdated { get; set; }
 
         protected Paste()
         {
